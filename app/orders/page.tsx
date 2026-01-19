@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { getUserOrders } from "@/services/orderService";
-import Order from "@/models/Order"; // This is the Database Model
+import { Order } from "@/models/Order"; // This is the Database Model
 import User from "@/models/User";
 import connectDB from "@/lib/mongodb";
 import { redirect } from "next/navigation";
