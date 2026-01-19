@@ -13,20 +13,22 @@ export default function Sidebar() {
   const [minPrice, setMinPrice] = useState(searchParams.get("min") || "");
   const [maxPrice, setMaxPrice] = useState(searchParams.get("max") || "");
 
+  // Update local state when URL params change
   useEffect(() => {
     setCategory(searchParams.get("category") || "");
     setMinPrice(searchParams.get("min") || "");
     setMaxPrice(searchParams.get("max") || "");
   }, [searchParams]);
 
-  // Apply filters function
+  // Function to push new params to URL
   const applyFilters = (newMin?: string, newMax?: string) => {
     const params = new URLSearchParams(searchParams.toString());
     
+    // Category Logic
     if (category && category !== "All") params.set("category", category);
     else params.delete("category");
 
-    // Use provided values or state values
+    // Price Logic (Use passed values or current state)
     const finalMin = newMin !== undefined ? newMin : minPrice;
     const finalMax = newMax !== undefined ? newMax : maxPrice;
 
@@ -50,14 +52,16 @@ export default function Sidebar() {
     applyFilters(min, max);
   };
 
+  // ✅ Updated Ranges to match your Screenshot
   const priceRanges = [
-    { label: "Under-1000", min: "0", max: "1000" },
-    { label: "1000-5000", min: "1000", max: "5000" },
-    { label: "5000-10000", min: "5000", max: "10000" },
-    { label: "10000-50000", min: "10000", max: "50000" },
-    { label: "50000-Over", min: "50000", max: "" },
+    { label: "Under-1471", min: "0", max: "1471" },
+    { label: "1471-5799", min: "1471", max: "5799" },
+    { label: "5799-31240", min: "5799", max: "31240" },
+    { label: "31240-40068", min: "31240", max: "40068" },
+    { label: "40068-Over", min: "40068", max: "" },
   ];
 
+  // Sidebar visibility logic
   const sidebarClass = `fixed left-0 top-16 bottom-0 bg-white border-r border-gray-200 overflow-y-auto transition-all duration-300 z-40 ${
     isSidebarOpen ? "w-64 px-6 py-6" : "w-0 px-0 overflow-hidden border-none"
   }`;
@@ -71,11 +75,9 @@ export default function Sidebar() {
           <h3 className="font-bold text-gray-900 mb-3">Category</h3>
           <select
             id="category-select"
-            aria-label="Filter by Category" // 👈 Added Fix: Accessible Name
+            aria-label="Category"
             value={category}
-            onChange={(e) => {
-                setCategory(e.target.value);
-            }}
+            onChange={(e) => setCategory(e.target.value)}
             className="w-full border border-gray-300 rounded p-2 text-sm bg-white focus:ring-2 focus:ring-black outline-none"
           >
             <option value="All">All Categories</option>
@@ -88,74 +90,72 @@ export default function Sidebar() {
 
         {/* 2. Price Section */}
         <div>
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-3">
             <h3 className="font-bold text-gray-900">Price</h3>
             <button 
               type="button"
-              className="text-gray-400 text-xs cursor-pointer hover:text-black"
-              onClick={() => { setMinPrice(""); setMaxPrice(""); applyFilters("",""); }}
+              className="text-xs text-gray-400 hover:text-black underline"
+              onClick={() => { setMinPrice(""); setMaxPrice(""); applyFilters("", ""); }}
             >
               Reset
             </button>
           </div>
 
-          {/* Manual Inputs Row */}
-          <form onSubmit={handleManualPriceSubmit} className="flex gap-2 mb-4">
-            <input
-              type="number"
-              placeholder="LKR"
-              aria-label="Minimum Price" // 👈 Added Fix: Accessible Name
-              className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-black"
-              value={minPrice}
-              onChange={(e) => setMinPrice(e.target.value)}
-            />
-            <span className="text-gray-400 self-center">-</span>
-            <input
-              type="number"
-              placeholder="LKR"
-              aria-label="Maximum Price" // 👈 Added Fix: Accessible Name
-              className="w-full border border-gray-300 rounded px-2 py-1 text-sm outline-none focus:border-black"
-              value={maxPrice}
-              onChange={(e) => setMaxPrice(e.target.value)}
-            />
+          {/* Manual Input Row (Matches Screenshot Layout) */}
+          <form onSubmit={handleManualPriceSubmit} className="flex items-center gap-2 mb-4">
+            <div className="flex-1">
+              <input
+                type="number"
+                placeholder="LKR"
+                aria-label="Min Price"
+                className="w-full border border-gray-300 p-2 text-sm outline-none focus:border-black text-center"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+              />
+            </div>
+            <span className="text-gray-400">-</span>
+            <div className="flex-1">
+              <input
+                type="number"
+                placeholder="LKR"
+                aria-label="Max Price"
+                className="w-full border border-gray-300 p-2 text-sm outline-none focus:border-black text-center"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+              />
+            </div>
+            {/* OK Button */}
             <button 
                 type="submit" 
-                className="bg-black text-white px-3 py-1 rounded text-sm hover:bg-gray-800"
+                className="bg-black text-white px-3 py-2 text-sm font-bold hover:bg-gray-800 transition"
             >
                 OK
             </button>
           </form>
 
-          {/* Radio Buttons for Ranges */}
-          <div className="space-y-2">
+          {/* Radio Buttons List */}
+          <div className="space-y-3">
             {priceRanges.map((range, index) => (
               <label key={index} className="flex items-center gap-3 cursor-pointer group">
-                <div className="relative flex items-center">
+                <div className="relative flex items-center justify-center">
                     <input 
                         type="radio" 
                         name="price_range" 
-                        className="peer h-4 w-4 cursor-pointer appearance-none rounded-full border border-gray-300 checked:border-black transition-all"
+                        className="peer h-5 w-5 cursor-pointer appearance-none rounded-full border border-gray-400 checked:border-black transition-all"
                         checked={minPrice === range.min && maxPrice === range.max}
                         onChange={() => handlePriceRangeClick(range.min, range.max)}
-                        aria-label={range.label} // 👈 Added Fix: Accessible Name
+                        aria-label={range.label}
                     />
-                    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 bg-black rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></span>
+                    {/* Inner dot for radio button */}
+                    <span className="absolute w-2.5 h-2.5 bg-black rounded-full opacity-0 peer-checked:opacity-100 transition-opacity pointer-events-none"></span>
                 </div>
-                <span className="text-sm text-gray-700 group-hover:text-black">
+                <span className="text-sm text-gray-600 group-hover:text-black transition-colors">
                     {range.label}
                 </span>
               </label>
             ))}
           </div>
         </div>
-
-        {/* Apply Button */}
-        <button 
-            onClick={() => applyFilters()} 
-            className="w-full bg-black text-white py-3 rounded font-medium hover:bg-gray-800 transition"
-        >
-          Apply Filters
-        </button>
 
       </div>
     </aside>
